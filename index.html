@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Triết Học 75 Câu - Phân Hóa Cao</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    padding:20px;
+    background:#f4f6fb;
+    font-family:Arial,Helvetica,sans-serif;
+    color:#222;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+    background:white;
+    border-radius:16px;
+    padding:24px;
+    box-shadow:0 4px 16px rgba(0,0,0,.08);
+}
+
+h1{
+    text-align:center;
+    margin-top:0;
+}
+
+.progress-container{
+    width:100%;
+    height:14px;
+    background:#ddd;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.progress{
+    width:0%;
+    height:100%;
+    background:#2563eb;
+    transition:.3s;
+}
+
+#questionNumber{
+    color:#666;
+    margin-bottom:10px;
+}
+
+#question{
+    font-size:1.15rem;
+    line-height:1.6;
+    margin-bottom:20px;
+}
+
+.option{
+    width:100%;
+    text-align:left;
+    padding:14px;
+    border:2px solid #d1d5db;
+    border-radius:10px;
+    background:white;
+    cursor:pointer;
+    margin-bottom:10px;
+    transition:.2s;
+}
+
+.option:hover{
+    background:#f9fafb;
+}
+
+.correct{
+    background:#dcfce7 !important;
+    border-color:#22c55e !important;
+}
+
+.wrong{
+    background:#fee2e2 !important;
+    border-color:#ef4444 !important;
+}
+
+#explanation{
+    display:none;
+    margin-top:20px;
+    padding:16px;
+    background:#eff6ff;
+    border-left:5px solid #2563eb;
+    border-radius:8px;
+    line-height:1.6;
+}
+
+.controls{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+}
+
+button{
+    flex:1;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:1rem;
+}
+
+#prevBtn{
+    background:#6b7280;
+    color:white;
+}
+
+#nextBtn{
+    background:#2563eb;
+    color:white;
+}
+
+#result{
+    display:none;
+}
+
+.section{
+    background:#f8fafc;
+    padding:14px;
+    border-radius:10px;
+    margin-top:15px;
+}
+
+@media(max-width:600px){
+
+    .controls{
+        flex-direction:column;
+    }
+
+    #question{
+        font-size:1rem;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🧠 Quiz Triết Học Chuyên Sâu (75 Câu)</h1>
+
+<div class="progress-container">
+    <div class="progress" id="progress"></div>
+</div>
+
+<div id="quiz">
+
+<div id="questionNumber"></div>
+
+<div id="question"></div>
+
+<div id="options"></div>
+
+<div id="explanation"></div>
+
+<div class="controls">
+<button id="prevBtn">Câu trước</button>
+<button id="nextBtn">Câu tiếp theo</button>
+</div>
+
+</div>
+
+<div id="result">
+
+<h2>Kết quả</h2>
+
+<div id="score"></div>
+
+<div class="section">
+<h3>Phân tích theo chủ đề</h3>
+<div id="topicStats"></div>
+</div>
+
+<div class="section">
+<h3>Gợi ý ôn tập</h3>
+<div id="review"></div>
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const questions = [
+{
+category:"Ontology",
+question:"Plato cho rằng các hình tròn cụ thể đều không hoàn hảo nhưng con người vẫn có khái niệm về 'hình tròn hoàn hảo'. Điều này được giải thích tốt nhất bởi học thuyết nào?",
+options:[
+"Học thuyết nguyên tử",
+"Học thuyết Ý niệm",
+"Chủ nghĩa duy vật lịch sử",
+"Thuyết kinh nghiệm"
+],
+answer:1,
+explanation:"Theo Plato, các sự vật cảm tính chỉ là bản sao không hoàn hảo của các Ý niệm tồn tại vĩnh cửu. Khái niệm hình tròn hoàn hảo không bắt nguồn từ kinh nghiệm trực tiếp mà từ việc linh hồn tiếp cận thế giới Ý niệm. Đây là nền tảng của bản thể luận duy tâm khách quan của Plato."
+},
+
+{
+category:"Epistemology",
+question:"Một nhà nghiên cứu chỉ chấp nhận những gì có thể kiểm chứng bằng quan sát và thí nghiệm. Quan điểm này gần với trường phái nào nhất?",
+options:[
+"Chủ nghĩa kinh nghiệm",
+"Chủ nghĩa duy tâm",
+"Thuyết tiên nghiệm",
+"Thuyết hiện sinh"
+],
+answer:0,
+explanation:"Chủ nghĩa kinh nghiệm cho rằng nguồn gốc chủ yếu của tri thức là kinh nghiệm cảm tính. Những nhà kinh nghiệm như Locke hay Hume nhấn mạnh vai trò của quan sát và thực nghiệm trong việc hình thành tri thức đáng tin cậy."
+},
+
+{
+category:"Logic",
+question:"Nếu mọi triết gia đều là người suy tư và Socrates là triết gia thì kết luận nào tất yếu đúng?",
+options:[
+"Socrates là nhà khoa học",
+"Socrates là người suy tư",
+"Mọi người suy tư đều là triết gia",
+"Socrates không phải người suy tư"
+],
+answer:1,
+explanation:"Đây là tam đoạn luận chuẩn của Aristotle. Từ tiền đề 'mọi triết gia đều là người suy tư' và 'Socrates là triết gia', suy ra hợp lệ rằng Socrates là người suy tư. Đây là ví dụ điển hình của suy luận diễn dịch."
+},
+
+{
+category:"Dialectics",
+question:"Theo phép biện chứng, tại sao sự ổn định tuyệt đối không thể tồn tại lâu dài?",
+options:[
+"Vì mọi vật đều có mâu thuẫn nội tại",
+"Vì tự nhiên luôn hỗn loạn",
+"Vì con người thiếu tri thức",
+"Vì mọi thay đổi đều ngẫu nhiên"
+],
+answer:0,
+explanation:"Phép biện chứng cho rằng mọi sự vật đều chứa các mặt đối lập. Sự thống nhất và đấu tranh của các mặt đối lập tạo ra vận động. Do đó trạng thái hoàn toàn bất biến là không thể kéo dài vì mâu thuẫn nội tại luôn thúc đẩy biến đổi."
+},
+
+{
+category:"Hegel",
+question:"Trong hệ thống Hegel, mâu thuẫn có vai trò gì?",
+options:[
+"Sai lầm cần loại bỏ",
+"Động lực phát triển của tư duy và lịch sử",
+"Hiện tượng ngẫu nhiên",
+"Dấu hiệu của nhận thức sai"
+],
+answer:1,
+explanation:"Hegel xem mâu thuẫn là nguồn động lực của sự phát triển. Mỗi hình thái tư tưởng khi phát triển sẽ bộc lộ giới hạn của chính mình, dẫn tới mâu thuẫn và sự xuất hiện hình thái cao hơn."
+},
+
+{
+category:"Marx",
+question:"Theo Marx, yếu tố nào quyết định cuối cùng sự vận động của lịch sử?",
+options:[
+"Ý chí cá nhân",
+"Sự phát triển của lực lượng sản xuất",
+"Tôn giáo",
+"Tư tưởng đạo đức"
+],
+answer:1,
+explanation:"Marx cho rằng sự phát triển của lực lượng sản xuất là động lực sâu xa nhất của lịch sử. Khi lực lượng sản xuất phát triển vượt khỏi khuôn khổ quan hệ sản xuất cũ, mâu thuẫn xã hội nảy sinh và dẫn đến biến đổi lịch sử."
+},
+
+{
+category:"Ethics",
+question:"Một người trả lại ví bị mất dù chắc chắn không ai phát hiện nếu giữ lại. Theo Kant, hành động này có giá trị đạo đức nhất khi nào?",
+options:[
+"Vì sợ pháp luật",
+"Vì muốn được khen",
+"Vì tôn trọng nghĩa vụ đạo đức",
+"Vì hy vọng nhận thưởng"
+],
+answer:2,
+explanation:"Kant cho rằng động cơ mới quyết định giá trị đạo đức. Hành động xuất phát từ sự tôn trọng quy luật đạo đức phổ quát mới thực sự có giá trị đạo đức, không phải vì lợi ích hay hậu quả."
+},
+
+{
+category:"Aristotle",
+question:"Người luôn chi tiêu vừa phải, tránh keo kiệt và phung phí, đang thể hiện đức hạnh nào theo Aristotle?",
+options:[
+"Công bằng",
+"Khôn ngoan",
+"Trung đạo",
+"Can đảm"
+],
+answer:2,
+explanation:"Aristotle cho rằng đức hạnh thường nằm giữa hai cực đoan. Trong trường hợp này, sự hào phóng là trạng thái trung dung giữa keo kiệt và phung phí."
+},
+
+{
+category:"Nietzsche",
+question:"Nietzsche phê phán mạnh nhất điều gì trong đạo đức truyền thống?",
+options:[
+"Sự đề cao sáng tạo cá nhân",
+"Sự phục tùng các giá trị áp đặt",
+"Sự phát triển khoa học",
+"Sự tự chủ"
+],
+answer:1,
+explanation:"Nietzsche cho rằng nhiều hệ thống đạo đức truyền thống làm suy yếu sức sống và khả năng sáng tạo của con người bằng cách áp đặt các giá trị cố định từ bên ngoài."
+},
+
+{
+category:"Political Philosophy",
+question:"Theo Marx, nhà nước trong xã hội có giai cấp chủ yếu phản ánh điều gì?",
+options:[
+"Lợi ích chung tuyệt đối",
+"Ý chí thần linh",
+"Tương quan quyền lực giai cấp",
+"Ngẫu nhiên lịch sử"
+],
+answer:2,
+explanation:"Marx xem nhà nước là bộ phận của kiến trúc thượng tầng, thường phản ánh và bảo vệ các quan hệ sản xuất cùng lợi ích của giai cấp thống trị."
+},
+
+{
+category:"Epistemology",
+question:"Khi Hume nghi ngờ quan hệ nhân quả, ông muốn nhấn mạnh điều gì?",
+options:[
+"Nhân quả là chân lý tuyệt đối",
+"Ta chỉ trực tiếp quan sát được sự kế tiếp hiện tượng",
+"Nhân quả do Thượng đế tạo ra",
+"Mọi tri thức đều sai"
+],
+answer:1,
+explanation:"Hume cho rằng chúng ta không trực tiếp quan sát được mối liên hệ tất yếu giữa nguyên nhân và kết quả mà chỉ thấy các hiện tượng thường xuyên đi kèm nhau."
+},
+
+{
+category:"Dialectics",
+question:"Một doanh nghiệp liên tục cải tiến nhỏ rồi đột phá công nghệ. Đây là ví dụ của quy luật nào?",
+options:[
+"Nguyên nhân kết quả",
+"Lượng đổi chất đổi",
+"Bản chất hiện tượng",
+"Khả năng hiện thực"
+],
+answer:1,
+explanation:"Những thay đổi tích lũy về lượng cuối cùng đạt điểm nút và tạo ra bước nhảy về chất. Đây là biểu hiện kinh điển của quy luật lượng – chất."
+},
+
+{
+category:"Ontology",
+question:"Aristotle phê phán Plato vì cho rằng:",
+options:[
+"Ý niệm tách rời sự vật",
+"Ý niệm quá vật chất",
+"Tri thức không tồn tại",
+"Logic là vô ích"
+],
+answer:0,
+explanation:"Aristotle cho rằng bản chất không tồn tại ở thế giới riêng biệt như Plato nói. Bản chất nằm ngay trong các sự vật cụ thể và phải được nghiên cứu từ chính chúng."
+},
+
+{
+category:"Marx",
+question:"Theo chủ nghĩa duy vật lịch sử, khi quan hệ sản xuất trở thành 'xiềng xích' đối với lực lượng sản xuất thì điều gì thường xảy ra?",
+options:[
+"Phát triển ổn định mãi mãi",
+"Cải biến xã hội",
+"Ngừng phát triển lịch sử",
+"Xóa bỏ công nghệ"
+],
+answer:1,
+explanation:"Mâu thuẫn giữa lực lượng sản xuất và quan hệ sản xuất sẽ thúc đẩy cải cách hoặc cách mạng xã hội nhằm thiết lập quan hệ sản xuất phù hợp hơn."
+},
+
+{
+category:"Synthesis",
+question:"Điểm giống nhau quan trọng giữa Hegel và Marx là gì?",
+options:[
+"Đều duy tâm",
+"Đều bác bỏ biện chứng",
+"Đều xem mâu thuẫn là động lực phát triển",
+"Đều phủ nhận lịch sử"
+],
+answer:2,
+explanation:"Dù khác nhau về nền tảng duy tâm và duy vật, cả Hegel lẫn Marx đều coi mâu thuẫn là nguồn gốc của vận động và phát triển."
+},
+
+{
+category:"Ethics",
+question:"Nếu đánh giá hành động chủ yếu bằng kết quả mang lại, lập trường đó gần nhất với:",
+options:[
+"Đạo đức Kant",
+"Hệ quả luận",
+"Chủ nghĩa khắc kỷ",
+"Hiện sinh luận"
+],
+answer:1,
+explanation:"Hệ quả luận cho rằng giá trị đạo đức của hành động phụ thuộc chủ yếu vào hậu quả của nó. Đây là cách tiếp cận khác với Kant vốn nhấn mạnh động cơ."
+},
+
+{
+category:"Logic",
+question:"Mệnh đề nào là phủ định đúng của 'Mọi sinh viên đều chăm học'?",
+options:[
+"Không sinh viên nào chăm học",
+"Có ít nhất một sinh viên không chăm học",
+"Mọi sinh viên đều lười",
+"Một số sinh viên chăm học"
+],
+answer:1,
+explanation:"Trong logic vị từ, phủ định của mệnh đề phổ quát 'mọi' là mệnh đề tồn tại 'có ít nhất một'. Đây là quy tắc cơ bản của lượng từ."
+},
+
+{
+category:"Political Philosophy",
+question:"Plato cho rằng ai nên lãnh đạo nhà nước lý tưởng?",
+options:[
+"Người giàu nhất",
+"Triết gia",
+"Quân đội",
+"Thương nhân"
+],
+answer:1,
+explanation:"Trong tác phẩm Cộng hòa, Plato cho rằng triết gia là người có tri thức về cái Thiện nên phù hợp nhất để cai trị xã hội."
+},
+
+{
+category:"Dialectics",
+question:"Trong phép biện chứng, 'phủ định của phủ định' hàm ý điều gì?",
+options:[
+"Sự lặp lại y nguyên",
+"Sự phát triển theo đường xoắn ốc",
+"Sự phá hủy hoàn toàn",
+"Sự đứng yên"
+],
+answer:1,
+explanation:"Phủ định của phủ định diễn tả sự phát triển có kế thừa. Cái mới vượt qua cái cũ nhưng vẫn giữ lại những yếu tố hợp lý, tạo nên sự tiến bộ theo hình xoắn ốc."
+},
+
+{
+category:"Epistemology",
+question:"Theo nhận thức luận duy vật biện chứng, tiêu chuẩn cuối cùng của chân lý là gì?",
+options:[
+"Niềm tin cá nhân",
+"Thực tiễn",
+"Trực giác",
+"Truyền thống"
+],
+answer:1,
+explanation:"Thực tiễn là tiêu chuẩn kiểm nghiệm chân lý. Một tri thức chỉ được xác nhận là đúng khi được hoạt động thực tiễn chứng minh."
+},
+
+{
+category:"Ontology",
+question:"Quan điểm cho rằng chỉ tồn tại vật chất và mọi hiện tượng tinh thần đều có cơ sở vật chất được gọi là:",
+options:[
+"Nhị nguyên luận",
+"Chủ nghĩa duy vật",
+"Chủ nghĩa duy tâm",
+"Thuyết hoài nghi"
+],
+answer:1,
+explanation:"Chủ nghĩa duy vật khẳng định vật chất tồn tại khách quan và là cơ sở của mọi hiện tượng, kể cả ý thức."
+},
+
+{
+category:"Marx",
+question:"Theo Marx, cơ sở hạ tầng của xã hội chủ yếu gồm:",
+options:[
+"Đạo đức và tôn giáo",
+"Quan hệ sản xuất",
+"Giáo dục",
+"Nghệ thuật"
+],
+answer:1,
+explanation:"Cơ sở hạ tầng là toàn bộ các quan hệ sản xuất hợp thành cơ cấu kinh tế của xã hội và giữ vai trò nền tảng đối với kiến trúc thượng tầng."
+},
+
+{
+category:"Nietzsche",
+question:"Khái niệm 'siêu nhân' của Nietzsche nhấn mạnh điều gì?",
+options:[
+"Sức mạnh quân sự",
+"Khả năng tự sáng tạo giá trị",
+"Quyền lực nhà nước",
+"Niềm tin tôn giáo"
+],
+answer:1,
+explanation:"Siêu nhân là hình ảnh con người vượt qua các giá trị cũ và tự tạo ra ý nghĩa cho cuộc sống bằng sức mạnh sáng tạo của chính mình."
+},
+
+{
+category:"Hegel",
+question:"Theo Hegel, lịch sử có tính hợp lý vì:",
+options:[
+"Mọi sự kiện đều ngẫu nhiên",
+"Lý tính thể hiện trong tiến trình lịch sử",
+"Lịch sử không có quy luật",
+"Chỉ cá nhân tạo nên lịch sử"
+],
+answer:1,
+explanation:"Hegel cho rằng lịch sử thế giới là quá trình triển khai của lý tính. Những biến cố lịch sử phản ánh sự phát triển của tinh thần trong việc đạt tới tự do."
+},
+
+{
+category:"Synthesis",
+question:"Một nhà nghiên cứu vừa phân tích điều kiện kinh tế vừa xem xét tư tưởng chính trị khi giải thích biến động xã hội. Cách tiếp cận này gần nhất với:",
+options:[
+"Chủ nghĩa duy vật lịch sử",
+"Thuyết hư vô",
+"Thuyết bất khả tri",
+"Chủ nghĩa khắc kỷ"
+],
+answer:0,
+explanation:"Chủ nghĩa duy vật lịch sử nghiên cứu mối quan hệ biện chứng giữa cơ sở kinh tế và kiến trúc thượng tầng, bao gồm các tư tưởng và thiết chế chính trị."
+},
+{
+category:"Epistemology",
+question:"Kant cho rằng tri thức của con người hình thành từ sự kết hợp giữa yếu tố nào?",
+options:[
+"Kinh nghiệm và các khuôn thức tiên nghiệm của tư duy",
+"Ý niệm và linh hồn",
+"Thần học và logic",
+"Trực giác và ngẫu nhiên"
+],
+answer:0,
+explanation:"Kant phê phán cả chủ nghĩa duy lý lẫn chủ nghĩa kinh nghiệm cực đoan. Ông cho rằng kinh nghiệm cung cấp dữ liệu cảm tính, còn tâm trí con người cung cấp các phạm trù tiên nghiệm để tổ chức dữ liệu đó thành tri thức có ý nghĩa."
+},
+
+{
+category:"Ontology",
+question:"Nếu mọi sự vật chỉ tồn tại khi được tri giác, lập trường đó gần nhất với:",
+options:[
+"Chủ nghĩa duy vật",
+"Chủ nghĩa duy tâm chủ quan",
+"Nhị nguyên luận",
+"Chủ nghĩa hiện thực"
+],
+answer:1,
+explanation:"Duy tâm chủ quan cho rằng sự tồn tại của sự vật phụ thuộc vào ý thức hoặc tri giác. Berkeley là đại diện nổi tiếng với luận điểm 'tồn tại tức là được tri giác'."
+},
+
+{
+category:"Logic",
+question:"Lập luận nào mắc lỗi 'khẳng định hệ quả'?",
+options:[
+"Nếu A thì B. A. Vậy B.",
+"Nếu A thì B. B. Vậy A.",
+"A hoặc B. Không A. Vậy B.",
+"Nếu A thì B. Không B. Vậy không A."
+],
+answer:1,
+explanation:"Từ 'Nếu A thì B' và 'B' không thể suy ra 'A', vì B có thể do nguyên nhân khác tạo ra. Đây là một ngụy biện logic rất phổ biến."
+},
+
+{
+category:"Dialectics",
+question:"Theo phép biện chứng, đâu là cách tiếp cận phù hợp nhất đối với một hiện tượng xã hội?",
+options:[
+"Tách rời khỏi hoàn cảnh",
+"Xem xét trong mối liên hệ và vận động",
+"Chỉ nghiên cứu quá khứ",
+"Chỉ tập trung vào hiện tượng bề ngoài"
+],
+answer:1,
+explanation:"Phép biện chứng yêu cầu xem xét sự vật trong hệ thống các mối liên hệ và trong quá trình vận động phát triển của nó thay vì cô lập hoặc bất biến hóa đối tượng."
+},
+
+{
+category:"Hegel",
+question:"Điểm hạn chế lớn nhất mà Marx phê phán ở Hegel là gì?",
+options:[
+"Không sử dụng logic",
+"Đặt tinh thần lên trước vật chất",
+"Không quan tâm lịch sử",
+"Phủ nhận mâu thuẫn"
+],
+answer:1,
+explanation:"Marx cho rằng Hegel đã 'đứng trên đầu' khi xem tinh thần là nền tảng của thực tại. Marx muốn 'đặt Hegel đứng lại trên chân' bằng cách chuyển sang lập trường duy vật."
+},
+
+{
+category:"Marx",
+question:"Trong chủ nghĩa duy vật lịch sử, yếu tố nào thuộc kiến trúc thượng tầng?",
+options:[
+"Công cụ lao động",
+"Quan hệ sản xuất",
+"Pháp luật",
+"Lực lượng sản xuất"
+],
+answer:2,
+explanation:"Kiến trúc thượng tầng bao gồm nhà nước, pháp luật, đạo đức, tôn giáo, triết học và các hình thái ý thức xã hội khác được xây dựng trên cơ sở hạ tầng kinh tế."
+},
+
+{
+category:"Ethics",
+question:"Theo Aristotle, mục tiêu tối hậu của đời sống đạo đức là gì?",
+options:[
+"Khoái lạc",
+"Hạnh phúc viên mãn (Eudaimonia)",
+"Quyền lực",
+"Tự do tuyệt đối"
+],
+answer:1,
+explanation:"Aristotle xem Eudaimonia là trạng thái sống tốt đẹp và phát triển đầy đủ tiềm năng con người. Đức hạnh là phương tiện để đạt tới mục tiêu này."
+},
+
+{
+category:"Nietzsche",
+question:"Nietzsche đánh giá cao phẩm chất nào nhất?",
+options:[
+"Sự phục tùng",
+"Sự sáng tạo và vượt lên chính mình",
+"Sự bình đẳng tuyệt đối",
+"Sự thụ động"
+],
+answer:1,
+explanation:"Triết học Nietzsche nhấn mạnh ý chí sức mạnh, khả năng tự vượt qua giới hạn và sáng tạo giá trị mới thay vì chỉ tuân thủ chuẩn mực có sẵn."
+},
+
+{
+category:"Political Philosophy",
+question:"Theo Marx, đấu tranh giai cấp xuất hiện do:",
+options:[
+"Mâu thuẫn lợi ích giữa các giai cấp",
+"Khác biệt tôn giáo",
+"Khác biệt khí hậu",
+"Khác biệt ngôn ngữ"
+],
+answer:0,
+explanation:"Các giai cấp có vị trí khác nhau trong quan hệ sản xuất nên thường có lợi ích đối lập. Mâu thuẫn này là cơ sở của đấu tranh giai cấp."
+},
+
+{
+category:"Epistemology",
+question:"Người cho rằng con người không thể biết được bản chất cuối cùng của thực tại thuộc lập trường nào?",
+options:[
+"Thuyết bất khả tri",
+"Chủ nghĩa duy vật",
+"Chủ nghĩa hiện thực",
+"Chủ nghĩa kinh nghiệm"
+],
+answer:0,
+explanation:"Thuyết bất khả tri khẳng định khả năng nhận thức của con người có giới hạn đến mức không thể biết được bản chất tối hậu của thế giới."
+},
+
+{
+category:"Dialectics",
+question:"Một chính sách từng thúc đẩy phát triển nhưng sau đó trở thành rào cản. Điều này thể hiện nguyên lý nào?",
+options:[
+"Sự chuyển hóa của các mặt đối lập",
+"Đồng nhất tuyệt đối",
+"Nhân quả đơn tuyến",
+"Không có quy luật"
+],
+answer:0,
+explanation:"Trong điều kiện mới, cái từng có vai trò tích cực có thể chuyển thành tiêu cực. Đây là biểu hiện của tính biện chứng và sự chuyển hóa giữa các mặt đối lập."
+},
+
+{
+category:"Ontology",
+question:"Nhị nguyên luận của Descartes thừa nhận:",
+options:[
+"Chỉ vật chất tồn tại",
+"Chỉ tinh thần tồn tại",
+"Hai thực thể cơ bản: vật chất và tinh thần",
+"Không có thực thể nào"
+],
+answer:2,
+explanation:"Descartes cho rằng tồn tại hai loại thực thể cơ bản: res extensa (vật chất) và res cogitans (tư duy). Đây là mô hình nhị nguyên nổi tiếng."
+},
+
+{
+category:"Logic",
+question:"Nếu 'Không nhà triết học nào là bất tử', suy ra điều nào đúng?",
+options:[
+"Mọi người đều bất tử",
+"Một số triết gia bất tử",
+"Không có triết gia nào bất tử",
+"Mọi triết gia đều bất tử"
+],
+answer:2,
+explanation:"Đây là cách diễn đạt tương đương về mặt logic của mệnh đề phủ định phổ quát."
+},
+
+{
+category:"Marx",
+question:"Theo Marx, cuộc cách mạng xã hội thường bùng nổ khi:",
+options:[
+"Không có mâu thuẫn xã hội",
+"Lực lượng sản xuất mâu thuẫn sâu sắc với quan hệ sản xuất",
+"Tôn giáo suy yếu",
+"Dân số giảm"
+],
+answer:1,
+explanation:"Khi quan hệ sản xuất trở nên lỗi thời và cản trở sự phát triển của lực lượng sản xuất, mâu thuẫn xã hội có thể dẫn tới cách mạng."
+},
+
+{
+category:"Synthesis",
+question:"Điểm khác biệt lớn giữa Plato và Aristotle là gì?",
+options:[
+"Plato tách Ý niệm khỏi sự vật, Aristotle gắn bản chất với sự vật",
+"Aristotle phủ nhận logic",
+"Plato là nhà duy vật",
+"Aristotle phủ nhận tri thức"
+],
+answer:0,
+explanation:"Plato xem Ý niệm tồn tại độc lập, còn Aristotle cho rằng bản chất nằm trong chính các sự vật cụ thể."
+},
+
+{
+category:"Ethics",
+question:"Một người giúp đỡ người khác chỉ để nổi tiếng. Theo Kant, hành động đó:",
+options:[
+"Có giá trị đạo đức hoàn toàn",
+"Không có giá trị đạo đức thực sự",
+"Cao hơn nghĩa vụ",
+"Là hành động xấu tuyệt đối"
+],
+answer:1,
+explanation:"Hành động phù hợp với đạo đức nhưng xuất phát từ động cơ vụ lợi không có giá trị đạo đức đích thực theo Kant."
+},
+
+{
+category:"Political Philosophy",
+question:"Theo Plato, nguy cơ lớn nhất của dân chủ cực đoan là gì?",
+options:[
+"Thiếu tự do",
+"Quần chúng bị cảm xúc dẫn dắt",
+"Quá nhiều triết gia",
+"Thiếu thương mại"
+],
+answer:1,
+explanation:"Plato lo ngại rằng dư luận thiếu tri thức có thể dẫn tới các quyết định phi lý và mở đường cho chế độ chuyên chế."
+},
+
+{
+category:"Nietzsche",
+question:"'Ý chí sức mạnh' của Nietzsche chủ yếu nói về:",
+options:[
+"Khả năng sáng tạo và tự khẳng định",
+"Vũ lực quân sự",
+"Quyền lực nhà nước",
+"Tiền bạc"
+],
+answer:0,
+explanation:"Ý chí sức mạnh là động lực thúc đẩy con người phát triển, sáng tạo và vượt qua giới hạn của chính mình."
+},
+
+{
+category:"Dialectics",
+question:"Theo quy luật phủ định của phủ định, sự phát triển thường diễn ra như thế nào?",
+options:[
+"Đường thẳng tuyệt đối",
+"Chu kỳ lặp nguyên trạng",
+"Đường xoắn ốc",
+"Ngẫu nhiên hoàn toàn"
+],
+answer:2,
+explanation:"Mỗi giai đoạn mới kế thừa và vượt qua giai đoạn trước, tạo nên xu hướng phát triển theo hình xoắn ốc."
+},
+
+{
+category:"Epistemology",
+question:"Theo duy vật biện chứng, nhận thức là:",
+options:[
+"Sự phản ánh thụ động",
+"Quá trình phản ánh tích cực và sáng tạo",
+"Ảo giác tập thể",
+"Niềm tin chủ quan"
+],
+answer:1,
+explanation:"Nhận thức không chỉ sao chép hiện thực mà còn là hoạt động tích cực, sáng tạo của chủ thể trên cơ sở thực tiễn."
+},
+
+{
+category:"Ontology",
+question:"Chủ nghĩa duy vật và chủ nghĩa duy tâm khác nhau cơ bản ở câu hỏi nào?",
+options:[
+"Đạo đức là gì?",
+"Vật chất hay ý thức có trước?",
+"Nhà nước là gì?",
+"Con người có tự do không?"
+],
+answer:1,
+explanation:"Vấn đề cơ bản của triết học xoay quanh quan hệ giữa vật chất và ý thức. Đây là điểm phân biệt cốt lõi giữa duy vật và duy tâm."
+},
+
+{
+category:"Marx",
+question:"Theo Marx, cơ sở sâu xa của các biến đổi chính trị là:",
+options:[
+"Biến đổi kinh tế",
+"Ý chí cá nhân",
+"Khí hậu",
+"Ngôn ngữ"
+],
+answer:0,
+explanation:"Những biến đổi trong cơ sở kinh tế thường dẫn tới thay đổi trong kiến trúc thượng tầng chính trị và pháp lý."
+},
+
+{
+category:"Hegel",
+question:"Theo Hegel, tự do phát triển thông qua:",
+options:[
+"Lịch sử của tinh thần",
+"Ngẫu nhiên",
+"Di truyền",
+"Bản năng"
+],
+answer:0,
+explanation:"Lịch sử là quá trình tinh thần ngày càng ý thức rõ hơn về tự do của chính mình."
+},
+
+{
+category:"Logic",
+question:"Từ 'A hoặc B', nếu biết A sai, có thể kết luận gì?",
+options:[
+"B đúng",
+"A đúng",
+"C đúng",
+"Không kết luận được"
+],
+answer:0,
+explanation:"Theo quy tắc loại tuyển, nếu một vế của mệnh đề tuyển đúng-sai bị loại bỏ thì vế còn lại phải đúng."
+},
+
+{
+category:"Synthesis",
+question:"Một nhà nghiên cứu vừa dùng dữ liệu thực nghiệm vừa phân tích cấu trúc kinh tế xã hội. Cách tiếp cận này gần nhất với:",
+options:[
+"Chủ nghĩa duy vật biện chứng",
+"Thuyết hư vô",
+"Thuyết thần học",
+"Thuyết định mệnh"
+],
+answer:0,
+explanation:"Duy vật biện chứng và duy vật lịch sử kết hợp nghiên cứu thực tiễn với phân tích các quan hệ vật chất và xã hội."
+},
+{
+category:"Epistemology",
+question:"Một nhà khoa học liên tục sửa đổi giả thuyết khi xuất hiện dữ liệu mới. Theo nhận thức luận hiện đại, điều này phản ánh điều gì?",
+options:[
+"Chân lý hoàn toàn tương đối",
+"Tri thức phát triển thông qua kiểm nghiệm và điều chỉnh",
+"Không tồn tại tri thức khách quan",
+"Khoa học chỉ là niềm tin"
+],
+answer:1,
+explanation:"Tri thức khoa học không bất biến mà được kiểm tra liên tục bằng thực tiễn. Khi có bằng chứng mới, lý thuyết được điều chỉnh hoặc thay thế để phản ánh hiện thực chính xác hơn. Điều này thể hiện tính lịch sử và phát triển của nhận thức."
+},
+
+{
+category:"Ontology",
+question:"Theo Aristotle, hình thức (form) và vật chất (matter) tồn tại như thế nào?",
+options:[
+"Tách biệt hoàn toàn",
+"Chỉ có hình thức tồn tại",
+"Chỉ có vật chất tồn tại",
+"Thống nhất trong sự vật cụ thể"
+],
+answer:3,
+explanation:"Aristotle bác bỏ việc tách rời Ý niệm khỏi sự vật. Ông cho rằng mọi sự vật cụ thể đều là sự kết hợp giữa vật chất và hình thức, hai mặt không tồn tại độc lập trong thế giới thực."
+},
+
+{
+category:"Logic",
+question:"Mệnh đề nào tương đương logic với 'Nếu A thì B'?",
+options:[
+"Nếu không B thì không A",
+"Nếu B thì A",
+"A và B",
+"Không A thì không B"
+],
+answer:0,
+explanation:"Phản đảo tương đương của 'Nếu A thì B' là 'Nếu không B thì không A'. Đây là một quy tắc cơ bản trong logic mệnh đề."
+},
+
+{
+category:"Dialectics",
+question:"Một công nghệ mới ban đầu chỉ bổ sung cho công nghệ cũ nhưng sau đó thay thế hoàn toàn nó. Đây là ví dụ điển hình của:",
+options:[
+"Lượng đổi dẫn tới chất đổi",
+"Đồng nhất tuyệt đối",
+"Nhân quả tuyến tính",
+"Ngẫu nhiên thuần túy"
+],
+answer:0,
+explanation:"Những cải tiến nhỏ tích lũy dần có thể dẫn tới bước nhảy về chất, khiến hệ thống cũ bị thay thế bởi hệ thống mới."
+},
+
+{
+category:"Hegel",
+question:"Trong phép biện chứng Hegel, 'Aufhebung' (sublation) hàm ý điều gì?",
+options:[
+"Xóa bỏ hoàn toàn",
+"Giữ nguyên trạng",
+"Vừa phủ định vừa bảo tồn",
+"Phá hủy ngẫu nhiên"
+],
+answer:2,
+explanation:"Khái niệm Aufhebung là trung tâm của biện chứng Hegel. Một giai đoạn mới phủ định giai đoạn trước nhưng đồng thời bảo tồn những yếu tố hợp lý của nó."
+},
+
+{
+category:"Marx",
+question:"Theo Marx, hàng hóa có hai thuộc tính cơ bản nào?",
+options:[
+"Giá trị sử dụng và giá trị",
+"Giá cả và lợi nhuận",
+"Cung và cầu",
+"Tiền và vốn"
+],
+answer:0,
+explanation:"Trong phân tích của Marx, hàng hóa vừa có khả năng thỏa mãn nhu cầu (giá trị sử dụng), vừa có giá trị trao đổi phản ánh lao động xã hội kết tinh trong nó."
+},
+
+{
+category:"Ethics",
+question:"Theo Kant, điều gì làm cho một quy tắc trở thành nguyên tắc đạo đức?",
+options:[
+"Nó đem lại lợi ích",
+"Nó được số đông chấp nhận",
+"Nó có thể trở thành luật phổ quát",
+"Nó tạo ra hạnh phúc"
+],
+answer:2,
+explanation:"Mệnh lệnh tuyệt đối của Kant yêu cầu chỉ hành động theo nguyên tắc mà ta có thể mong muốn trở thành luật phổ quát cho mọi người."
+},
+
+{
+category:"Aristotle",
+question:"Theo Aristotle, đức hạnh hình thành chủ yếu bằng cách nào?",
+options:[
+"Bẩm sinh",
+"Rèn luyện qua thói quen",
+"Mặc khải thần linh",
+"Ngẫu nhiên"
+],
+answer:1,
+explanation:"Đức hạnh không đơn thuần là tri thức mà là thói quen được hình thành qua hành động lặp lại. Con người trở nên công bằng bằng cách thực hành các hành động công bằng."
+},
+
+{
+category:"Nietzsche",
+question:"Nietzsche phản đối mạnh nhất khuynh hướng nào?",
+options:[
+"Tự vượt lên chính mình",
+"Chủ nghĩa bình quân làm suy yếu sự xuất sắc",
+"Sáng tạo cá nhân",
+"Khẳng định cuộc sống"
+],
+answer:1,
+explanation:"Nietzsche lo ngại rằng việc tuyệt đối hóa sự đồng đều có thể kìm hãm sự phát triển của những cá nhân xuất sắc và khả năng sáng tạo của con người."
+},
+
+{
+category:"Political Philosophy",
+question:"Theo Marx, ý thức xã hội chịu ảnh hưởng sâu sắc bởi:",
+options:[
+"Cơ sở kinh tế",
+"Di truyền",
+"Khí hậu",
+"Ngẫu nhiên"
+],
+answer:0,
+explanation:"Marx không phủ nhận vai trò của tư tưởng nhưng cho rằng các điều kiện vật chất và quan hệ sản xuất tác động mạnh đến cách con người suy nghĩ."
+},
+
+{
+category:"Epistemology",
+question:"Khi hai lý thuyết đều giải thích được dữ liệu hiện tại, khoa học thường làm gì?",
+options:[
+"Kiểm nghiệm thêm bằng thực tiễn",
+"Chọn ngẫu nhiên",
+"Ngừng nghiên cứu",
+"Bác bỏ cả hai"
+],
+answer:0,
+explanation:"Thực tiễn tiếp tục đóng vai trò kiểm chứng. Các dự đoán mới và thí nghiệm mới giúp phân biệt giữa các lý thuyết cạnh tranh."
+},
+
+{
+category:"Dialectics",
+question:"Theo phép biện chứng, nguyên nhân và kết quả có thể:",
+options:[
+"Hoàn toàn tách biệt",
+"Chuyển hóa lẫn nhau trong điều kiện nhất định",
+"Không liên hệ",
+"Luôn cố định"
+],
+answer:1,
+explanation:"Một kết quả trong hoàn cảnh mới có thể trở thành nguyên nhân của quá trình khác. Đây là cách nhìn động và liên hệ của phép biện chứng."
+},
+
+{
+category:"Ontology",
+question:"Chủ nghĩa duy tâm khách quan cho rằng:",
+options:[
+"Ý thức cá nhân tạo ra thế giới",
+"Thực tại dựa trên tinh thần khách quan",
+"Chỉ vật chất tồn tại",
+"Không tồn tại quy luật"
+],
+answer:1,
+explanation:"Duy tâm khách quan như ở Plato hay Hegel xem thực tại cuối cùng bắt nguồn từ một nguyên lý tinh thần tồn tại khách quan."
+},
+
+{
+category:"Logic",
+question:"Lập luận nào hợp lệ?",
+options:[
+"A→B; B; nên A",
+"A→B; A; nên B",
+"A∨B; A; nên B",
+"A→B; không A; nên không B"
+],
+answer:1,
+explanation:"Đây là quy tắc Modus Ponens. Các lựa chọn còn lại đều mắc lỗi suy luận không hợp lệ."
+},
+
+{
+category:"Marx",
+question:"Khái niệm 'tha hóa' của Marx chủ yếu mô tả điều gì?",
+options:[
+"Sự tách rời người lao động khỏi sản phẩm và bản chất của mình",
+"Sự phát triển khoa học",
+"Sự mở rộng dân chủ",
+"Sự suy giảm dân số"
+],
+answer:0,
+explanation:"Trong xã hội tư bản, người lao động có thể mất quyền kiểm soát đối với sản phẩm lao động và cảm thấy xa lạ với chính hoạt động sống của mình."
+},
+
+{
+category:"Synthesis",
+question:"Điểm giống giữa Kant và Aristotle là gì?",
+options:[
+"Đều xem đạo đức chỉ là cảm xúc",
+"Đều quan tâm tới đời sống đạo đức của con người",
+"Đều phủ nhận lý trí",
+"Đều là nhà duy vật"
+],
+answer:1,
+explanation:"Dù tiếp cận khác nhau, cả Kant và Aristotle đều tìm cách giải thích điều gì làm nên đời sống đạo đức tốt đẹp."
+},
+
+{
+category:"Political Philosophy",
+question:"Theo Plato, công bằng trong nhà nước lý tưởng là khi:",
+options:[
+"Mọi người làm đúng chức năng phù hợp của mình",
+"Mọi người có tài sản bằng nhau",
+"Không tồn tại luật pháp",
+"Nhà nước không can thiệp"
+],
+answer:0,
+explanation:"Plato cho rằng công bằng xuất hiện khi mỗi tầng lớp thực hiện đúng vai trò của mình và không can thiệp vào chức năng của tầng lớp khác."
+},
+
+{
+category:"Nietzsche",
+question:"'Hãy trở thành chính mình' trong tinh thần Nietzsche nhấn mạnh:",
+options:[
+"Tuân thủ hoàn toàn chuẩn mực xã hội",
+"Tự kiến tạo giá trị và bản sắc",
+"Phục tùng truyền thống",
+"Từ bỏ cá tính"
+],
+answer:1,
+explanation:"Nietzsche khuyến khích con người sáng tạo cuộc sống của riêng mình thay vì chỉ tiếp nhận các giá trị có sẵn."
+},
+
+{
+category:"Hegel",
+question:"Theo Hegel, mâu thuẫn có vai trò gì đối với nhận thức?",
+options:[
+"Cản trở hoàn toàn nhận thức",
+"Là động lực phát triển của tư duy",
+"Không liên quan",
+"Chỉ là lỗi logic"
+],
+answer:1,
+explanation:"Tư duy phát triển bằng cách vượt qua những giới hạn và mâu thuẫn nội tại của chính nó."
+},
+
+{
+category:"Epistemology",
+question:"Theo duy vật biện chứng, chân lý tuyệt đối và chân lý tương đối quan hệ với nhau như thế nào?",
+options:[
+"Loại trừ nhau",
+"Không liên hệ",
+"Chân lý tuyệt đối được tích lũy từ các chân lý tương đối",
+"Hoàn toàn giống nhau"
+],
+answer:2,
+explanation:"Mỗi tri thức đúng phản ánh một phần hiện thực khách quan. Qua quá trình phát triển nhận thức, các chân lý tương đối góp phần tiến gần hơn tới chân lý tuyệt đối."
+},
+
+{
+category:"Dialectics",
+question:"Một hạt giống phát triển thành cây rồi tạo ra hạt giống mới. Ví dụ này thường được dùng để minh họa:",
+options:[
+"Phủ định của phủ định",
+"Đồng nhất tuyệt đối",
+"Ngẫu nhiên",
+"Nhị nguyên luận"
+],
+answer:0,
+explanation:"Hạt giống bị phủ định bởi cây, cây lại tạo ra hạt giống mới ở trình độ cao hơn. Đây là ví dụ kinh điển của phủ định của phủ định."
+},
+
+{
+category:"Ontology",
+question:"Câu hỏi 'Thế giới có tồn tại độc lập với ý thức hay không?' thuộc lĩnh vực nào?",
+options:[
+"Đạo đức học",
+"Nhận thức luận",
+"Bản thể luận",
+"Mỹ học"
+],
+answer:2,
+explanation:"Bản thể luận nghiên cứu bản chất và sự tồn tại của thực tại, bao gồm vấn đề quan hệ giữa tồn tại và ý thức."
+},
+
+{
+category:"Marx",
+question:"Theo chủ nghĩa duy vật lịch sử, sự thay thế các hình thái kinh tế - xã hội diễn ra chủ yếu do:",
+options:[
+"Ý chí cá nhân",
+"Quy luật khách quan của sự phát triển xã hội",
+"Tình cờ",
+"Tôn giáo"
+],
+answer:1,
+explanation:"Marx xem lịch sử là quá trình lịch sử - tự nhiên, trong đó các hình thái xã hội thay đổi theo những quy luật khách quan gắn với sự phát triển của lực lượng sản xuất."
+},
+
+{
+category:"Logic",
+question:"Nếu 'Tất cả A đều là B' và 'Một số A là C', kết luận nào chắc chắn đúng?",
+options:[
+"Một số B là C",
+"Mọi B là C",
+"Không B nào là C",
+"Mọi C là B"
+],
+answer:0,
+explanation:"Vì một số A thuộc C và mọi A thuộc B, nên những A đó đồng thời thuộc B và C. Do đó tồn tại ít nhất một phần tử vừa là B vừa là C."
+},
+
+{
+category:"Synthesis",
+question:"Điểm khác biệt cốt lõi giữa Marx và Nietzsche là gì?",
+options:[
+"Marx tập trung vào cấu trúc xã hội, Nietzsche tập trung vào sự tự vượt của cá nhân",
+"Marx phủ nhận lịch sử",
+"Nietzsche là nhà duy vật lịch sử",
+"Cả hai hoàn toàn giống nhau"
+],
+answer:0,
+explanation:"Marx phân tích các quan hệ kinh tế - xã hội và đấu tranh giai cấp, trong khi Nietzsche quan tâm nhiều hơn đến sự sáng tạo giá trị và quá trình tự vượt lên của cá nhân."
+}
+
+];
+let currentQuestion = 0;
+let score = 0;
+let answered = false;
+
+let wrongTopics = [];
+
+const progress = document.getElementById("progress");
+const questionNumber = document.getElementById("questionNumber");
+const questionBox = document.getElementById("question");
+const optionsBox = document.getElementById("options");
+const explanationBox = document.getElementById("explanation");
+
+const nextBtn = document.getElementById("nextBtn");
+const prevBtn = document.getElementById("prevBtn");
+
+shuffleQuestions();
+
+loadQuestion();
+
+function shuffleQuestions(){
+
+for(let i = questions.length - 1; i > 0; i--){
+
+    let j = Math.floor(Math.random() * (i + 1));
+
+    [questions[i], questions[j]] =
+    [questions[j], questions[i]];
+}
+
+}
+
+function loadQuestion(){
+
+answered = false;
+
+const q = questions[currentQuestion];
+
+questionNumber.innerHTML =
+`Câu ${currentQuestion + 1} / ${questions.length}`;
+
+questionBox.innerHTML = q.question;
+
+optionsBox.innerHTML = "";
+
+explanationBox.style.display = "none";
+
+q.options.forEach((option,index)=>{
+
+    const btn = document.createElement("button");
+
+    btn.className = "option";
+
+    btn.innerHTML =
+    String.fromCharCode(65 + index) + ". " + option;
+
+    btn.onclick = () => selectAnswer(index);
+
+    optionsBox.appendChild(btn);
+
+});
+
+progress.style.width =
+((currentQuestion)/questions.length)*100 + "%";
+
+saveProgress();
+
+}
+
+function selectAnswer(selected){
+
+if(answered) return;
+
+answered = true;
+
+const q = questions[currentQuestion];
+
+const buttons =
+document.querySelectorAll(".option");
+
+buttons.forEach(btn=>btn.disabled=true);
+
+buttons[q.answer].classList.add("correct");
+
+if(selected === q.answer){
+
+    score++;
+
+}else{
+
+    buttons[selected].classList.add("wrong");
+
+    wrongTopics.push(q.category);
+
+}
+
+explanationBox.style.display = "block";
+
+explanationBox.innerHTML =
+"<strong>Giải thích:</strong><br><br>" +
+q.explanation;
+
+saveProgress();
+
+}
+
+nextBtn.addEventListener("click",()=>{
+
+if(!answered) return;
+
+currentQuestion++;
+
+if(currentQuestion >= questions.length){
+
+    showResult();
+    return;
+
+}
+
+loadQuestion();
+
+});
+
+prevBtn.addEventListener("click",()=>{
+
+if(currentQuestion === 0) return;
+
+currentQuestion--;
+
+loadQuestion();
+
+});
+
+function saveProgress(){
+
+const data = {
+
+    currentQuestion,
+    score,
+    wrongTopics
+
+};
+
+localStorage.setItem(
+    "philosophyQuiz75",
+    JSON.stringify(data)
+);
+
+}
+
+function restoreProgress(){
+
+const raw =
+localStorage.getItem(
+    "philosophyQuiz75"
+);
+
+if(!raw) return;
+
+const data =
+JSON.parse(raw);
+
+currentQuestion =
+data.currentQuestion || 0;
+
+score =
+data.score || 0;
+
+wrongTopics =
+data.wrongTopics || [];
+
+}
+
+restoreProgress();
+
+function resetQuiz(){
+
+localStorage.removeItem(
+    "philosophyQuiz75"
+);
+
+location.reload();
+
+}
+
+function showResult(){
+
+document.getElementById("quiz")
+.style.display = "none";
+
+document.getElementById("result")
+.style.display = "block";
+
+progress.style.width = "100%";
+
+const percent =
+Math.round(
+    score/questions.length*100
+);
+
+document.getElementById("score")
+.innerHTML =
+`
+<h2>
+${score}/${questions.length}
+</h2>
+
+<h3>
+${percent}%
+</h3>
+`;
+
+buildStatistics();
+
+}
+function buildStatistics(){
+
+const topicStatsDiv =
+document.getElementById("topicStats");
+
+const reviewDiv =
+document.getElementById("review");
+
+const topics = {};
+
+questions.forEach(q=>{
+
+    if(!topics[q.category]){
+
+        topics[q.category] = 0;
+
+    }
+
+});
+
+wrongTopics.forEach(topic=>{
+
+    if(topics[topic] !== undefined){
+
+        topics[topic]++;
+
+    }
+
+});
+
+let statsHTML = "";
+
+Object.keys(topics).forEach(topic=>{
+
+    const wrong = topics[topic];
+
+    const total =
+    questions.filter(
+        q=>q.category===topic
+    ).length;
+
+    const correct =
+    total - wrong;
+
+    const percentage =
+    Math.round(
+        correct/total*100
+    );
+
+    let level = "";
+
+    if(percentage >= 85){
+
+        level =
+        "🟢 Rất tốt";
+
+    }else if(
+        percentage >= 70
+    ){
+
+        level =
+        "🟡 Khá";
+
+    }else if(
+        percentage >= 50
+    ){
+
+        level =
+        "🟠 Trung bình";
+
+    }else{
+
+        level =
+        "🔴 Cần ôn tập";
+
+    }
+
+    statsHTML +=
+    `
+    <div style="
+    margin-bottom:12px;
+    padding:10px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    ">
+    <strong>${topic}</strong><br>
+    Đúng:
+    ${correct}/${total}
+    (${percentage}%)
+    <br>
+    Đánh giá:
+    ${level}
+    </div>
+    `;
+
+});
+
+topicStatsDiv.innerHTML =
+statsHTML;
+
+buildReview();
+
+}
+
+function buildReview(){
+
+const reviewDiv =
+document.getElementById("review");
+
+const weakTopics =
+[...new Set(wrongTopics)];
+
+if(
+    weakTopics.length === 0
+){
+
+    reviewDiv.innerHTML =
+    `
+    <p>
+    🎉 Bạn không có chủ đề yếu nổi bật.
+    </p>
+
+    <p>
+    Hãy thử đọc sâu hơn:
+    Plato,
+    Aristotle,
+    Kant,
+    Hegel,
+    Marx,
+    Nietzsche.
+    </p>
+    `;
+
+    return;
+
+}
+
+let reviewHTML =
+"<ul>";
+
+weakTopics.forEach(topic=>{
+
+    let suggestion = "";
+
+    switch(topic){
+
+        case "Ontology":
+
+            suggestion =
+            "Ôn bản thể luận, duy vật, duy tâm, Plato và Aristotle.";
+            break;
+
+        case "Epistemology":
+
+            suggestion =
+            "Ôn nhận thức luận, Descartes, Hume, Kant, chân lý và thực tiễn.";
+            break;
+
+        case "Logic":
+
+            suggestion =
+            "Ôn tam đoạn luận, Modus Ponens, lượng từ và ngụy biện.";
+            break;
+
+        case "Dialectics":
+
+            suggestion =
+            "Ôn mâu thuẫn biện chứng, lượng-chất, phủ định của phủ định.";
+            break;
+
+        case "Hegel":
+
+            suggestion =
+            "Ôn phép biện chứng duy tâm, Aufhebung, Tinh thần tuyệt đối.";
+            break;
+
+        case "Marx":
+
+            suggestion =
+            "Ôn duy vật lịch sử, lực lượng sản xuất, quan hệ sản xuất, đấu tranh giai cấp.";
+            break;
+
+        case "Ethics":
+
+            suggestion =
+            "Ôn Kant, Aristotle, hệ quả luận và các học thuyết đạo đức.";
+            break;
+
+        case "Nietzsche":
+
+            suggestion =
+            "Ôn ý chí sức mạnh, siêu nhân và phê phán đạo đức truyền thống.";
+            break;
+
+        case "Political Philosophy":
+
+            suggestion =
+            "Ôn Plato, Marx và các lý thuyết nhà nước.";
+            break;
+
+        case "Synthesis":
+
+            suggestion =
+            "Luyện so sánh các hệ thống triết học và câu hỏi liên ngành.";
+            break;
+
+        default:
+
+            suggestion =
+            "Ôn tập lại chuyên đề này.";
+    }
+
+    reviewHTML +=
+    `
+    <li>
+    <strong>${topic}</strong>:
+    ${suggestion}
+    </li>
+    `;
+
+});
+
+reviewHTML +=
+"</ul>";
+
+reviewHTML +=
+`
+<button
+    onclick="resetQuiz()"
+    style="
+    margin-top:15px;
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    background:#2563eb;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    "
+>
+    Làm lại bài kiểm tra
+</button>
+`;
+
+reviewDiv.innerHTML =
+reviewHTML;
+
+}
+
+</script>
+
+</body>
+</html>
